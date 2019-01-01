@@ -1,0 +1,236 @@
+void main()
+{
+	char map[100];
+	int i = 0;
+	while i < 100
+	{
+		int j = 0;
+		while j < 10
+		{
+			map[i + j] = ' ';
+			j = j + 1;
+		}
+		i = i + 10;
+	}
+	int result = DoGame(map);
+	setscreen(1, 14);
+	printMessage("Game Over. Your lenght: ", 24);
+	printInt(result, 3);
+}
+
+int DoGame(char[] map)
+{
+	int snake[100];
+	int lenght = 2;
+	int head_index = 1;
+	int tail_index = 0;
+	/*2 - down 8 - up 4 - left 6 - right*/
+	int direction = 2;
+	char snakeMark = '*';
+	char snakeHeadMark = '&';
+	
+	/*init snake*/
+	int head_y = 5*10;
+	int head_x = 5;
+	int head = head_y + head_x;
+	int tail = head_y-10+head_x;
+	snake[head_index] = head;
+	snake[tail_index] = tail;
+	map[head] = snakeHeadMark;
+	map[tail] = snakeMark;
+	
+	printArena(map);
+	
+	int treat = generateTreat(map); 
+	char move = '0';
+	while true
+	{
+		sleep(-1);
+		move = '0';
+		scan >> move;
+		
+		if move <> '0'
+			direction = changeDirection(direction, move);
+		
+		/*printArena(map);*/
+		
+		updatePosition(map, head, 10, snakeMark);
+		/*map[head] = snakeMark;*/
+		
+		if direction == 2
+		{
+			head_y = head_y + 10;
+		}
+		else if direction == 8
+		{
+			head_y = head_y - 10;
+		}
+		else if direction == 4
+		{
+			head_x = head_x - 1;
+		}
+		else
+		{
+			head_x = head_x + 1;
+		}
+		
+		if head_y == -10 or head_y == 100 or head_x == -1 or head_x == 10
+			return lenght;
+		
+		head = head_y + head_x;
+		if(map[head] == '*')
+			return lenght;
+			
+		if head <> treat
+		{
+			updatePosition(map, tail, 10, ' ');
+			/*map[tail] = ' ';*/
+			tail_index = increaseIndex(tail_index);
+			tail = snake[tail_index];
+		}
+		else
+		{
+			treat = generateTreat(map);
+			lenght = lenght + 1;
+		}
+
+		updatePosition(map, head, 10, snakeHeadMark);
+		/*map[head] = snakeHeadMark;*/
+		head_index = increaseIndex(head_index);
+		snake[head_index] = head;
+	}
+} 
+
+int changeDirection(int direction, char move)
+{
+	if direction == 2 or direction == 8
+	{
+		if move == 'd' or move == 'D'
+			return 6;
+		if move == 'a' or move == 'A'
+			return 4;
+	}
+	else
+	{
+		if move == 'w' or move == 'W'
+			return 8;
+		if move == 's' or move == 'S'
+			return 2;
+	}
+	
+	return direction;
+}
+
+int generateTreat(char[] map)
+{
+	int treat = rand(100);
+	while map[treat] <> ' '
+	{
+		treat = treat + 1;
+		if treat == 100
+			treat = 0;
+	}	
+	updatePosition(map, treat, 10, '.');
+	return treat;
+}
+
+void printArena(string map)
+{
+	setscreen(1,1);
+	int i = 0;
+	while i < 12
+	{
+		print << '#';
+		i = i+1;
+	}
+	print << '\n';
+	
+	i = 0;
+	while i < 100
+	{
+		print << '#';
+		int j = 0;
+		while j < 10
+		{
+			print << map[i + j];
+			j = j + 1;
+		}
+		print << '#';
+		print << '\n';
+		i = i + 10;
+	}
+	
+	i = 0;
+	while i < 12
+	{
+		print << '#';
+		i = i+1;
+	}
+	print << '\n';
+}
+
+void updatePosition(char[] map, int index, int lenght, char symbol)
+{
+	map[index] = symbol;
+	int x = index;
+	int y = 0;
+	while( x >= lenght)
+	{
+		x = x - lenght;
+		y = y + 1;
+	}
+	setscreen(x + 1, y + 3);
+	print << symbol;
+}
+
+/*helper functions*/
+int increaseIndex(int index)
+{
+	index = index + 1;
+	if index == 100
+		index = 0;
+		
+	return index;
+}
+
+void printMessage(string message, int size)
+{
+	int i = 0;
+	while i < size
+	{
+		print << message[i];
+		i = i + 1;
+	}
+}
+
+void printInt(int toPrint, int digits)
+{
+	int i = digits;
+	while i > 0
+	{
+		int mult = 1;
+		int j = 1;
+		while j < i
+		{
+			mult = mult * 10;
+			j = j + 1;
+		}
+		
+		if i == 1 or toPrint >= mult
+		{		
+			int sum = 0;
+			int digit = 0;
+			while sum <= toPrint
+			{
+				digit = digit + 1;
+				sum = sum + mult;
+			}
+			
+			digit = digit + 47;
+			print << digit;
+			toPrint = toPrint - sum + mult;
+		}
+		i = i - 1;
+	}
+	
+}

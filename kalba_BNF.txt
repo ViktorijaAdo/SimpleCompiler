@@ -1,0 +1,104 @@
+<raide> ::= "a" | "b" | "c" | ... | "z" | "A" | "B" | ... | "Z"
+<skaitmuo> ::= "0" | "1" | ... | "9"
+<symbol> ::= "\n" | "\t" | "\\" | " " | "!" | '\"' | "@" | "#" | "$" | "%" | "^" | "&" | "`" | "(" | ")" | "*" | "=" | "+" | "-" | "." | "/" | "_" | "[" | "]"
+<op_add> ::= "+"
+<op_mult> ::= "*"
+<op_minus> ::= "-"
+<paran_open> ::= "("
+<paran_close> ::= "("
+<seperator_symbol> ::= ","
+
+<op_assign> ::= "="
+
+<op_less> ::= "<"
+<op_more> ::= ">"
+<op_lesseq> ::= "<="
+<op_moreeq> ::= ">="
+<op_eq> ::= "=="
+<op_noteq> ::= "<>"
+<comp_eq_operator> ::= <op_eq> | <op_noteq>
+<comp_operator> ::= <op_less> | <op_more> | <op_moreeq> | <op_lesseq> | <comp_eq_operator>
+
+<op_and> ::= "and"
+<op_or> ::= "or"
+<op_not> ::="not"
+<logical_operator> ::= <op_and> | <op_or>
+
+<const_true> ::= "true"
+<const_false ::= "false"
+
+<string_start_end_symbol> ::= '"'
+<char_start_end_symbol> ::= "'"
+
+<string_symbol> ::= <raide> | <skaitmuo> | <symbol>
+<string_text> ::= <string_text><string_symbol> | <string_symbol>
+
+<text> ::= <raide> | <text><raide>
+<numbers> ::= <numbers><skaitmuo> | <skaitmuo>
+<float> ::= <numbers>"."<numbers> | <numbers>"E"<numbers> | <numbers>"E"<op_minus><numbers>
+<text_with_numbers> ::= <text> | <text><numbers>
+<string> ::= <string_start_end_symbol><string_text><string_start_end_symbol> | <string_start_end_symbol><string_start_end_symbol>
+<char> ::= <char_start_end_symbol><string_symbol><char_start_end_symbol>
+
+<ident> ::= "_"<text_with_numbers> | <text_with_numbers>
+
+<simple_value> ::= <numbers>|<float>|<string>|<char>|<const_false>|<const_true>|<ident>|<fuction_call>
+
+<value> :== <paran_open><expression><paran_close> | <sub> | <not> | <simple_value>
+<sub> ::= <op_minus><value>
+<not> ::= <op_not><value>
+<mult> ::= <value>{<op_mult><value>}
+<add> ::= <mult>{<op_add><mult> | <op_minus><mult>}
+<comp> ::= <add>{<comp_operator><add>}
+<expression> ::= <comp>{<logical_operator><comp>}
+
+<statement_end_symbol> ::= ";"
+<block_start_symbol> ::= "{"
+<block_end_symbol> ::= "}"
+
+<bool_type> ::= "bool"
+<integer_type> ::= "int"
+<string_type> ::= "string"
+<char_type> ::= "char"
+<float_type> ::= "float"
+<type> ::= <bool_type> | <integer_type> | <float_type> | <string_type> | <char_type>
+<void_type> ::= "void"
+<function_return_type> ::= <type> | <void_type>
+
+<if_keyword> ::= "if"
+<else_keyword> ::= "else"
+<return_keyword> ::= "return"
+<while_keyword> ::= "while"
+<break_keyword> ::= "break"
+<continue_keyword> ::= "continue"
+<print_keyword> ::= "print"
+<print_op> ::= "<<"
+<scan_keyword> ::= "scan"
+<scan_op> ::= ">>"
+
+<params> ::= <expression>{<seperator_symbol><expression>}
+<function_params> ::= <paran_open>[<params>]<paran_close>
+
+<print_input> ::= <print_op><expression>
+<print_statement> ::= <print_keyword><print_input>{<print_input>}
+<scan_input> ::= <scan_op><ident>
+<scan_statement> ::= <scan_keyword><scan_input>{scan_input}
+<fuction_call> ::= <ident><function_params>
+<assignment> ::= <ident><op_assign><expression>
+<declaration> ::= <type><assignment> | <type><ident>
+<return_statement> ::= <return_keyword><expression> | <return_keyword>
+<statement_simple> ::= <assignment> | <declaration> | <fuction_call> | <return_statement> | <print_statement> | <scan_statement> | <break_keyword> | <continue_keyword>
+<statement> ::= <statement_simple><statement_end_symbol> | <statement_end_symbol> | <if_statement> | <while_statement>
+<block> ::= <block_start_symbol>{<statement>}<block_end_symbol> | <statement>
+
+<if_main> ::= <if_keyword><expression><block>
+<if_statement> ::= <if_main>{<else_keyword><if_main>}[<else_keyword><block>]
+
+<while_statement> ::= <while_keyword><expression><block>
+
+<params_def> ::= <type><ident>{<seperator_symbol><type><ident>}
+<function_def_params> ::= <paran_open>[<params_def>]<paran_close>
+<function_body> ::= <block_start_symbol>{<statement>}<block_end_symbol>
+<function> ::= <function_return_type><ident><function_def_params><function_body>
+
+<start> :== {<function>}
